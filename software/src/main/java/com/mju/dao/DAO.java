@@ -123,4 +123,16 @@ public class DAO {
 		}
 		return false;
 	}
+	
+	public boolean delete(String query) {
+		try {
+			statement.execute(query);
+		
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
 }

@@ -15,5 +15,6 @@ Classes:
 <br/>
 <input type="submit" value="Register!" />
 </form>
+${userclasslist}
 </body>
 </html>

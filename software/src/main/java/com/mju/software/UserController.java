@@ -27,8 +27,19 @@ public class UserController extends ControllerClass {
 			if(cm != null)
 			classList = classList + "<option value='"+cm.getID()+"'>"+cm.getTitle()+"</option>";
 		}
-		
 		mav.addObject("classlist", classList);
+		
+		
+		cma = dbhelper.getAllUserClasses(1);
+		
+		classList="";
+		for(ClassModel cm : cma)
+		{
+			if(cm != null)
+			classList = classList + "<p>"+cm.getTitle()+" | <a href='deleteclass?id="+cm.getID()+"'>Delete</a></p>";
+		}
+		mav.addObject("userclasslist", classList);		
+		
 		mav.setViewName("registerclass");
 		return mav;
 	}
@@ -43,6 +54,19 @@ public class UserController extends ControllerClass {
 			mav.addObject("res", "no");
 		
 		mav.setViewName("registerclassdone");
+		return mav;
+	}
+	
+	@RequestMapping(value = "/deleteclass", method = RequestMethod.GET)
+	public ModelAndView deleteclass(Locale locale, Model model , @ModelAttribute("id") String id) {
+		ModelAndView mav = new ModelAndView();
+		
+		if(dbhelper.unregisterclass(id, 1))
+			mav.addObject("res" , "yes");
+		else
+			mav.addObject("res", "no");
+		
+		mav.setViewName("deleteclass");
 		return mav;
 	}
 }

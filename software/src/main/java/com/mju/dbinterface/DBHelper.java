@@ -62,4 +62,32 @@ public class DBHelper {
 		}
 		return cma;
 	}
+	public ClassModel[] getAllUserClasses(int id) {
+		// TODO Auto-generated method stub
+		
+		ArrayList<HashMap<String, String>> student_class;
+		student_class = dao.select("select * from `student_class` where `student_id`='"+id+"'");
+		
+		ArrayList<HashMap<String, String>> cls;
+		
+		ClassModel[] cma = new ClassModel[student_class.size()];
+		int i=0;
+		for(HashMap<String, String> sc : student_class)
+		{
+			cma[i] = new ClassModel();
+			cls = dao.select("select * from `classes` where `id`='"+sc.get("class_id")+"'");
+			cma[i].setID(Integer.parseInt(cls.get(0).get("id")));
+			cma[i].setTitle(cls.get(0).get("title"));
+			i++;
+		}
+		return cma;
+	}
+	
+	public boolean unregisterclass(String class_id, int student_id) {
+		// TODO Auto-generated method stub
+		
+		boolean res = dao.delete("delete from `student_class` where `student_id`='"+student_id+"' and `class_id`='"+class_id+"'");
+		
+		return res;
+	}
 }
