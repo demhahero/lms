@@ -24,6 +24,7 @@ public class DBHelper {
 		users = dao.select("select * from users where `username`='"+am.getUsername()+"' and `password`='"+am.getPassword()+"'");
 		if(users != null){
 			um.setRank(Integer.parseInt(users.get(0).get("rank")));
+			um.setID(Integer.parseInt(users.get(0).get("id")));
 			if (users.get(0) != null){
 				return um;
 			}
@@ -87,6 +88,31 @@ public class DBHelper {
 		// TODO Auto-generated method stub
 		
 		boolean res = dao.delete("delete from `student_class` where `student_id`='"+student_id+"' and `class_id`='"+class_id+"'");
+		
+		return res;
+	}
+	public ClassModel[] getAllProfessorClasses(int id) {
+		// TODO Auto-generated method stub
+		
+		ArrayList<HashMap<String, String>> classes;
+		classes = dao.select("select * from `classes` where `prof_id`='"+id+"'");
+		ClassModel[] cma = new ClassModel[classes.size()];
+		ArrayList<HashMap<String, String>> cls;
+		
+		int i=0;
+		for(HashMap<String, String> sc : classes)
+		{
+			cma[i] = new ClassModel();
+	
+			cma[i].setID(Integer.parseInt(sc.get("id")));
+			cma[i].setTitle(sc.get("title"));
+			cma[0].setProfID(2);
+			i++;
+		}
+		return cma;
+	}
+	public boolean removeClass(String id) {
+		boolean res = dao.delete("delete from `classes` where `id`='"+id+"'");
 		
 		return res;
 	}

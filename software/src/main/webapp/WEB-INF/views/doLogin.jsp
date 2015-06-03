@@ -20,7 +20,7 @@ window.location = "registerclass";
 <c:if test="${rank == '1'}">  
 <script>
 
-window.location = "createclass";
+window.location = "professor/createclass";
 
 </script>
 </c:if>

@@ -2,19 +2,22 @@ package com.mju.software;
 
 import java.util.Locale;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.mju.model.ClassModel;
-
+@SessionAttributes("userid")
 @Controller
-public class UserController extends ControllerClass {
+public class StudentController extends ControllerClass {
 	@RequestMapping(value = "/registerclass", method = RequestMethod.GET)
-	public ModelAndView registerclass(Locale locale, Model model) {
+	public ModelAndView registerclass(Locale locale, Model model, HttpSession session) {
 		
 		ModelAndView mav = new ModelAndView();
 	
@@ -30,7 +33,7 @@ public class UserController extends ControllerClass {
 		mav.addObject("classlist", classList);
 		
 		
-		cma = dbhelper.getAllUserClasses(1);
+		cma = dbhelper.getAllUserClasses(Integer.parseInt(session.getAttribute("userid").toString()));
 		
 		classList="";
 		for(ClassModel cm : cma)
@@ -45,10 +48,10 @@ public class UserController extends ControllerClass {
 	}
 	
 	@RequestMapping(value = "/registerclassdone", method = RequestMethod.POST)
-	public ModelAndView registerclassdone(Locale locale, Model model , @ModelAttribute("class") String id) {
+	public ModelAndView registerclassdone(Locale locale, Model model, @ModelAttribute("class") String id, HttpSession session ) {
 		ModelAndView mav = new ModelAndView();
 		
-		if(dbhelper.registerclass(id, 1))
+		if(dbhelper.registerclass(id, Integer.parseInt(session.getAttribute("userid").toString())))
 			mav.addObject("res" , "yes");
 		else
 			mav.addObject("res", "no");
@@ -58,10 +61,10 @@ public class UserController extends ControllerClass {
 	}
 	
 	@RequestMapping(value = "/deleteclass", method = RequestMethod.GET)
-	public ModelAndView deleteclass(Locale locale, Model model , @ModelAttribute("id") String id) {
+	public ModelAndView deleteclass(Locale locale, Model model , @ModelAttribute("id") String id, HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		
-		if(dbhelper.unregisterclass(id, 1))
+		if(dbhelper.unregisterclass(id, Integer.parseInt(session.getAttribute("userid").toString())))
 			mav.addObject("res" , "yes");
 		else
 			mav.addObject("res", "no");

@@ -4,14 +4,14 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title>Creating class</title>
+<title>Insert title here</title>
 </head>
 <body>
-<form action="createclassdone" method="post">
-Title : <input name="title" type="text" />
-<br/>
-<input type="submit" value="Add"/>
-</form>
-${classlist}
+${res}
+<script>
+
+window.location = "createclass";
+
+</script>
 </body>
 </html>

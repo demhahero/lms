@@ -8,6 +8,7 @@ import java.util.Locale;
 
 
 
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -16,12 +17,15 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+
 
 
 import com.mju.model.UserModel;
 
 @Controller
+@SessionAttributes("userid")
 public class LoginController extends ControllerClass {
 
 	
@@ -47,9 +51,10 @@ public class LoginController extends ControllerClass {
 		
 		ModelAndView mav = new ModelAndView();
 		am = dbhelper.login(am);
-		if(am != null)
+		if(am != null){
+			mav.addObject("userid", am.getID());
 			mav.addObject("rank", am.getRank() );
-		else
+		} else
 			mav.addObject("username", "notright" );
 	
 		mav.setViewName("doLogin");

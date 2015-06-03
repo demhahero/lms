@@ -8,5 +8,11 @@
 </head>
 <body>
 ${res}
+
+<script>
+
+window.location = "createclass";
+
+</script>
 </body>
 </html>
