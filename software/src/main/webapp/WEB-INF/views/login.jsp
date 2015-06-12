@@ -4,9 +4,13 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
-<title></title>
+<title>Login Area</title>
 </head>
 <body>
-${res}
+<form action="dologin" method="post">
+UserName: <input name="username" /> <br/>
+Password: <input name="password" /> <br/>
+<input type="submit" value="Login" />
+</form>
 </body>
 </html>

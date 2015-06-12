@@ -7,12 +7,19 @@
 <title>Class has been created</title>
 </head>
 <body>
-${res}
 
-<script>
+<c:choose>
+	<c:when test="${error != null}">
+		<div><a>Error</a></div>
+		<c:url value="createclass" var="url"/>
+		<div><a href='${url}'>Back</a></div>
+	</c:when>
+	<c:otherwise>
+		<script>
+			window.location = "createclass";
+		</script>
+	</c:otherwise>
+</c:choose>
 
-window.location = "createclass";
-
-</script>
 </body>
 </html>

@@ -1,7 +1,9 @@
 package com.mju.software;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
@@ -12,17 +14,40 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.mju.frame.CController;
 import com.mju.model.ClassModel;
-@SessionAttributes("userid")
+import com.mju.model.RegisteredClassModel;
+
 @Controller
-public class StudentController extends ControllerClass {
+public class StudentController extends CController {
+	public StudentController() throws Exception {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 	@RequestMapping(value = "/registerclass", method = RequestMethod.GET)
-	public ModelAndView registerclass(Locale locale, Model model, HttpSession session) {
+	public ModelAndView registerclass(Locale locale, Model model, HttpSession session) throws InstantiationException, IllegalAccessException {
 		
 		ModelAndView mav = new ModelAndView();
 	
-		ClassModel[] cma;
-		cma = dbhelper.getAllClasses();
+		ClassModel cls = new ClassModel();
+		ArrayList<ClassModel> cma = dao.selectAll(cls, ClassModel.class);
+		
+		RegisteredClassModel rm = new RegisteredClassModel();
+		rm.setStudent_id(Integer.parseInt(session.getAttribute("userid").toString()));
+		ArrayList<RegisteredClassModel> rcma = dao.selectAll(rm, RegisteredClassModel.class);
+		
+		// Remove registered class
+		for(RegisteredClassModel rcm : rcma)
+		{
+			for(ClassModel cm : cma)
+			{
+				if(rcm.getClass_id()==cm.getID()){
+					cma.remove(cm);
+					break;
+				}
+			}
+		}
 		
 		String classList="";
 		for(ClassModel cm : cma)
@@ -33,13 +58,18 @@ public class StudentController extends ControllerClass {
 		mav.addObject("classlist", classList);
 		
 		
-		cma = dbhelper.getAllUserClasses(Integer.parseInt(session.getAttribute("userid").toString()));
+		
 		
 		classList="";
-		for(ClassModel cm : cma)
+		for(RegisteredClassModel rcm : rcma)
 		{
-			if(cm != null)
-			classList = classList + "<p>"+cm.getTitle()+" | <a href='deleteclass?id="+cm.getID()+"'>Delete</a></p>";
+			ClassModel tcls = new ClassModel();
+			tcls.setID(rcm.getClass_id());
+			ArrayList<ClassModel> tcma = dao.selectAll(tcls, ClassModel.class);
+			ClassModel tcm = tcma.get(0);
+			
+			if(tcm != null)
+			classList = classList + "<p>"+tcm.getTitle()+" | <a href='deleteclass?id="+tcm.getID()+"'>Delete</a></p>";
 		}
 		mav.addObject("userclasslist", classList);		
 		
@@ -51,10 +81,12 @@ public class StudentController extends ControllerClass {
 	public ModelAndView registerclassdone(Locale locale, Model model, @ModelAttribute("class") String id, HttpSession session ) {
 		ModelAndView mav = new ModelAndView();
 		
-		if(dbhelper.registerclass(id, Integer.parseInt(session.getAttribute("userid").toString())))
-			mav.addObject("res" , "yes");
-		else
-			mav.addObject("res", "no");
+		RegisteredClassModel rm = new RegisteredClassModel();
+		rm.setStudent_id(Integer.parseInt(session.getAttribute("userid").toString()));
+		rm.setClass_id(Integer.parseInt(id));
+		
+		if(!dao.insert(rm))
+			mav.addObject("error", "yes");
 		
 		mav.setViewName("registerclassdone");
 		return mav;
@@ -64,10 +96,12 @@ public class StudentController extends ControllerClass {
 	public ModelAndView deleteclass(Locale locale, Model model , @ModelAttribute("id") String id, HttpSession session) {
 		ModelAndView mav = new ModelAndView();
 		
-		if(dbhelper.unregisterclass(id, Integer.parseInt(session.getAttribute("userid").toString())))
-			mav.addObject("res" , "yes");
-		else
-			mav.addObject("res", "no");
+		RegisteredClassModel rm = new RegisteredClassModel();
+		rm.setStudent_id(Integer.parseInt(session.getAttribute("userid").toString()));
+		rm.setClass_id(Integer.parseInt(id));
+		
+		if(!dao.delete(rm))
+			mav.addObject("error", "yes");
 		
 		mav.setViewName("deleteclass");
 		return mav;

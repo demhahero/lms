@@ -1,6 +1,7 @@
-package com.mju.dao;
+package com.mju.frame;
 
 
+import java.lang.reflect.ParameterizedType;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -8,11 +9,9 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import javax.sql.DataSource;
-
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class DAO {
 	private Connection connect = null;
@@ -27,44 +26,12 @@ public class DAO {
 	static final String USER = "root";
 	static final String PASS = "";
 
-	public String connectDB() throws Exception {
-
-		try {
-	
-
-			// STEP 2: Register JDBC driver
-			Class.forName("com.mysql.jdbc.Driver");
-			
-			// STEP 3: Open a connection
-			System.out.println("Connecting to database...");
-			connect = DriverManager.getConnection(DB_URL, USER, PASS);
-
-			statement = connect.createStatement();
-			String sql;
-			sql = "SELECT * from `users`";
-			ResultSet rs = statement.executeQuery(sql);
-
-		
-			
-			if(rs != null)
-				return "hello1";
-
-		} catch (Exception e) {
-			return e.toString();
-		}
-		return "hello3";
-
-	}
-
-
 	public DAO() throws Exception {
 
 		try {
-	
-
 			// STEP 2: Register JDBC driver
 			Class.forName("com.mysql.jdbc.Driver");
-			
+
 			// STEP 3: Open a connection
 			System.out.println("Connecting to database...");
 			connect = DriverManager.getConnection(DB_URL, USER, PASS);
@@ -73,25 +40,27 @@ public class DAO {
 			String sql;
 			sql = "SELECT * from `users`";
 			ResultSet rs = statement.executeQuery(sql);
-
-		
 			
-		
-
 		} catch (Exception e) {
 	
 		}
-	
 
 	}
 	
+	public <T extends CModel> ArrayList<T> selectAll(CModel model, Class<T> returnType) throws InstantiationException, IllegalAccessException {
+		ArrayList<T> data = new ArrayList<T>();
 
-	
-	public ArrayList<HashMap<String, String>> select(String query) {
-		ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
-		
-		
-		
+		// Build query
+		String query = String.format("select * from %s", model.getTableName());
+		HashMap<String, String> d = model.getData();
+		if (d.keySet().size() > 0) {
+			List<String> list = new ArrayList<String>();
+			for (String key : d.keySet()) {
+				list.add(String.format("%s='%s'", key, d.get(key)));
+			}
+			String where = String.join(" and ", list);		
+			query += " where " + where;
+		}
 		try {
 			ResultSet rs = statement.executeQuery(query);
 			ResultSetMetaData rsmd = rs.getMetaData();
@@ -102,7 +71,11 @@ public class DAO {
 				for(int i=1; i<rsmd.getColumnCount()+1; i++){
 					class1.put(rsmd.getColumnName(i), rs.getString(rsmd.getColumnName(i)));
 				}
-				data.add(class1);
+				
+				T mdl = returnType.newInstance();
+				mdl.setData(class1);
+				
+				data.add(mdl);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -111,8 +84,18 @@ public class DAO {
 
 		return data;
 	}
+	
+	public boolean insert(CModel model) {
+		// Build query
+		HashMap<String, String> d = model.getData();
+		String keys = String.join(",", d.keySet());
+		List<String> list = new ArrayList<String>();
+		for (String key : d.keySet()) {
+			list.add("'"+d.get(key)+"'");
+		}
+		String values = String.join(",", list);
+		String query =  String.format("insert into %s(%s) values (%s)", model.getTableName(), keys, values);
 
-	public boolean insert(String query) {
 		try {
 			statement.execute(query);
 		
@@ -124,7 +107,32 @@ public class DAO {
 		return false;
 	}
 	
-	public boolean delete(String query) {
+	public boolean delete(CModel model) {
+
+		// Build query
+		String query = String.format("delete from %s", model.getTableName());
+		HashMap<String, String> d = model.getData();
+		if (d.keySet().size() > 0) {
+			List<String> list = new ArrayList<String>();
+			for (String key : d.keySet()) {
+				list.add(String.format("%s='%s'", key, d.get(key)));
+			}
+			String where = String.join(" and ", list);		
+			query += " where " + where;
+		}
+		
+		try {
+			statement.execute(query);
+		
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public boolean update(String query) {
 		try {
 			statement.execute(query);
 		

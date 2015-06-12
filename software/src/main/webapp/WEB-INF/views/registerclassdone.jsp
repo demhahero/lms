@@ -7,11 +7,19 @@
 <title>Insert title here</title>
 </head>
 <body>
-${res}
-<script>
 
-window.location = "registerclass";
+<c:choose>
+	<c:when test="${error != null}">
+		<div><a>Error</a></div>
+		<c:url value="registerclass" var="url"/>
+		<div><a href='${url}'>Back</a></div>
+	</c:when>
+	<c:otherwise>
+		<script>
+			window.location = "registerclass";
+		</script>
+	</c:otherwise>
+</c:choose>
 
-</script>
 </body>
 </html>

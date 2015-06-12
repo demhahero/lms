@@ -26,25 +26,25 @@ public class ProfessorTest {
 	}
 
 	@Test
-	public void testCreateClass() {
+	public void testCreateClass() throws Exception {
 		
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute("userid", "2");
 		
 		ProfessorController uc = new ProfessorController();
 		ModelAndView mav = uc.createclassdone(null, null, session, className);
-		assertEquals(mav.getModel().get("res").toString(), "yes");
+		assertNull(mav.getModel().get("error"));
 	}
 
 	
 	@Test
-	public void testDeleteClass() {
+	public void testDeleteClass() throws Exception {
 		
 		MockHttpSession session = new MockHttpSession();
 		session.setAttribute("userid", "2");
 		
 		ProfessorController uc = new ProfessorController();
 		ModelAndView mav = uc.deleteclass(null, null,"8");
-		assertEquals(mav.getModel().get("res").toString(), "yes");
+		assertNull(mav.getModel().get("error"));
 	}
 }

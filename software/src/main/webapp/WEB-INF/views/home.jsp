@@ -9,11 +9,8 @@
 	Hello world!  
 </h1>
 
-${serverTime}
 <script>
-
 window.location = "login";
-
 </script>
 </body>
 </html>

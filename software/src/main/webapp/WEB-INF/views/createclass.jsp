@@ -7,6 +7,7 @@
 <title>Creating class</title>
 </head>
 <body>
+<jsp:include page="master.jsp"></jsp:include>
 <form action="createclassdone" method="post">
 Title : <input name="title" type="text" />
 <br/>

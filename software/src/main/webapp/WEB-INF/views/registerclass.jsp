@@ -7,6 +7,7 @@
 <title>Registering for a class</title>
 </head>
 <body>
+<jsp:include page="master.jsp"></jsp:include>
 <form action="registerclassdone" method="post">
 Classes:
 <select name="class">
